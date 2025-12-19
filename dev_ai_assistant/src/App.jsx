@@ -3,6 +3,8 @@ import TypingIndicator from "./components/TypingIndicator";
 import { buildPrompt } from "./utils/promptBuilder";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 
 function App() {
@@ -21,6 +23,9 @@ function App() {
   const [mode, setMode] = useState("explain");
 
   const chatRef = useRef();
+
+  const [copiedIndex, setCopiedIndex] = useState(null);
+
 
   // Functions ---->
 
@@ -126,11 +131,73 @@ function App() {
               : "bg-blue-600 text-white ml-auto"
               }`}
           >
-            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+
+            <ReactMarkdown
+              remarkPlugins={[remarkGfm]}
+              components={{
+                code({ inline, className, children, ...props }) {
+                  const match = /language-(\w+)/.exec(className || "");
+
+                  // INLINE CODE
+                  if (inline) {
+                    return (
+                      <code className="bg-gray-800 px-1 py-0.5 rounded text-green-300">
+                        {children}
+                      </code>
+                    );
+                  }
+
+                  return (
+                    <div className="relative group">
+                      {/* Copy Button */}
+                      <button
+                        className="absolute right-2 top-2 bg-gray-700 text-white px-2 py-1 text-sm rounded opacity-0 group-hover:opacity-100 transition"
+                        onClick={() => {
+                          navigator.clipboard.writeText(String(children));
+                          setCopiedIndex(idx);
+                          setTimeout(() => setCopiedIndex(null), 2000);
+                        }}
+                      >
+                        {copiedIndex === idx ? "Copied!" : "Copy"}
+                      </button>
+
+
+                      <SyntaxHighlighter
+                        style={oneDark}
+                        language={match ? match[1] : "text"}
+                        PreTag="div"
+                        className="rounded-lg overflow-x-auto"
+                        {...props}
+                      >
+                        {String(children).replace(/\n$/, "")}
+                      </SyntaxHighlighter>
+                    </div>
+                  );
+                },
+              }}
+            >
               {msg.content}
             </ReactMarkdown>
+
+
+
+
           </div>
         ))}
+
+        {copiedIndex !== null && (
+          <div
+            className="
+      fixed bottom-6 right-6 
+      bg-green-600 text-white 
+      px-4 py-2 rounded-lg shadow-lg
+      transition-all duration-300 
+      animate-slideUpFade
+    "
+          >
+            Copied to clipboard!
+          </div>
+        )}
 
 
 

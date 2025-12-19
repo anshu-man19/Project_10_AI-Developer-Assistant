@@ -11,3 +11,22 @@ code {
   color: #e5e7eb;
   font-size: 14px;
 }
+
+@keyframes slideUpFade {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+}
+
+.animate-slideUpFade {
+  animation: slideUpFade 1.5s ease-in-out forwards;
+}
