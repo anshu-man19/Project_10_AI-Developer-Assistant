@@ -36,3 +36,14 @@ A full-stack AI-powered developer assistant that helps with **code explanation, 
 ---
 
 ## 📌 System Architecture
+- Frontend sends request → Backend forwards securely → AI returns → formatted response sent back
+
+---
+
+## 🔐 Environment Variables
+Create a `.env` inside `/backend`:
+
+
+> ⚠️ `.env` is ignored using `.gitignore`, so keys remain safe.
+
+---
